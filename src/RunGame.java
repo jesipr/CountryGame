@@ -15,9 +15,11 @@ public class RunGame {
 		Scanner in = new Scanner(System.in);
 		System.out.println("Enter Country name");
 		String country = in.nextLine();
+		country = country.replace(' ', '_');
+		System.out.println("Country selected "+ country);
 		Scanner word;
 		try {
-			URL my_url = new URL("https://en.wikipedia.org/wiki/"+country);
+			URL my_url = new URL("http://dbpedia.org/page/"+country);
 //			BufferedReader br = new BufferedReader(new InputStreamReader(my_url.openStream()));
 			word = new Scanner(new InputStreamReader(my_url.openStream()));
 			String strTemp = "";
