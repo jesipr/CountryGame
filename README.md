@@ -12,3 +12,12 @@ for a different country, and gives 15 seconds to the user to answer the query. I
 answer in 15 seconds, the game is over. If the user enters a country that has been already discussed 
 (in any direction), the program should inform that the country was already discussed; and the game is over.
 
+Similarly, the program should not ask any country that has been discussed. 
+VERY Important note: you are not allowed to hardcode name of any country or its capital 
+inside your code. 
+
+The conversation should NOT be case sensitive. However, if there is misspelling, the user loses 
+the game. Similarly, if the user asks for a country that does not exist in Wiki (or is misspelled), the use 
+loses the game.
+
+If the user does not lose the game before asking for 10 countries, he/she wins.
