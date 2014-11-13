@@ -7,8 +7,6 @@ import java.util.Scanner;
 
 
 public class RunGame {
-	public final static String KM = "x10000 km^2";
-
 
 	public static void main(String[] args)  {
 		Scanner in = new Scanner(System.in);
@@ -24,6 +22,8 @@ public class RunGame {
 }
 
 class CountryGame{
+	
+	
 	public final static String KM = "x10000 km^2";
 	
 	private String username;
