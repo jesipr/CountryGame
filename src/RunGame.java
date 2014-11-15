@@ -7,24 +7,21 @@ import java.util.Scanner;
 
 
 public class RunGame {
-
+	
 	public static void main(String[] args)  {
 		Scanner in = new Scanner(System.in);
 		System.out.println("Enter your name.");
 		String name = in.nextLine();
 		CountryGame game = new CountryGame(name);
 		game.startGame();
-
+		
 		in.close();
 	}
-
-
 }
 
 class CountryGame{
 	
-	
-	public final static String KM = "x10000 km^2";
+	private final static String KM = "x10000 km^2";
 	
 	private String username;
 	private String country;
@@ -61,7 +58,6 @@ class CountryGame{
 			}
 
 			selectedCountries.add(country);
-			System.out.println("Country selected "+ country);
 
 			capital = countryCapital(country);
 			area = countryArea(country);
@@ -81,17 +77,15 @@ class CountryGame{
 	 * @param country - The name of the country submitted by user
 	 * @return If the country entered exist or not.
 	 */
-	public boolean countryExist(String country){
+	private boolean countryExist(String country){
 
 		try{
 			URL countryListURL = new URL("http://en.wikipedia.org/wiki/List_of_sovereign_states");
 			BufferedReader in = new BufferedReader(new InputStreamReader(countryListURL.openStream()));
 
 			String temp="";
-			System.out.println("Looking for country...");
 			while(null != (temp = in.readLine())){
 				if(temp.contains(country)){
-					System.out.println("Country exist!");
 					return true;
 				}
 			}
@@ -103,12 +97,11 @@ class CountryGame{
 
 	/**
 	 * Looks for the capital of the entered country
-	 * @param country - The country selected
-	 * @return The capital of the selected country
+	 * @param country - The name of the country
+	 * @return The capital of the entered country
 	 */
-	public String countryCapital(String country){
+	private String countryCapital(String country){
 		boolean control = false;
-		System.out.println("Looking for " +country +" capital");
 		country = country.replace(' ','_');
 		String capital="";
 		
@@ -118,7 +111,6 @@ class CountryGame{
 			String strTemp = "";
 			while(null != (strTemp = br.readLine())){
 				if(control && strTemp.contains("title=")){
-					System.out.println(strTemp);
 					capital = strTemp.replaceAll("\\<[^>]*>","");
 					capital = capital.trim();
 					break;
@@ -135,47 +127,27 @@ class CountryGame{
 	}
 
 	/**
-	 * @param country
-	 * @return
+	 * Looks for the population of the entered country
+	 * @param country - The name of the country
+	 * @return The population of the entered country
 	 */
-	public String countryPopulation(String country){
-		boolean areaControl = false;
-		boolean totalControl = false;
-		System.out.println("Looking for " +country +" population");
-		country = country.replace(' ','_');
+	private String countryPopulation(String country){
 		String population="";
 		
-		try { 
-			URL countryURL = new URL("http://en.wikipedia.org/wiki/"+country);
-			BufferedReader br = new BufferedReader(new InputStreamReader(countryURL.openStream()));
-			String strTemp = "";
-			while(null != (strTemp = br.readLine())){
-				if(areaControl && totalControl && strTemp.contains("km")){
-					System.out.println(strTemp);
-					population = strTemp.replaceAll("\\<[^>]*>","");
-					population = population.trim();
-					break;
-				}else if(strTemp.contains("Total")){
-					totalControl = true;
-				}else if(strTemp.contains("Area")){
-					areaControl = true;
-				}
-			}
-		} catch (IOException e) {
-			System.out.println("Could not find country wiki page");
-		}
+		
+		
 		return population;
 
 	}
 
 	/**
-	 * @param country
-	 * @return
+	 * Looks for the area of the entered country
+	 * @param country - The name of the country
+	 * @return The area of the entered country
 	 */
-	public String countryArea(String country){
+	private String countryArea(String country){
 		boolean areaControl = false;
 		boolean totalControl = false;
-		System.out.println("Looking for " +country +" population");
 		country = country.replace(' ','_');
 		String area="";
 		
@@ -185,8 +157,8 @@ class CountryGame{
 			String strTemp = "";
 			while(null != (strTemp = br.readLine())){
 				if(areaControl && totalControl && strTemp.contains("km")){
-					System.out.println(strTemp);
 					area = strTemp.replaceAll("\\<[^>]*>","");
+					area = area.replace("&#160;km2", " km^2");
 					area = area.trim();
 					break;
 				}else if(strTemp.contains("Total")){
