@@ -10,7 +10,7 @@ public class RunGame {
 	
 	public static void main(String[] args)  {
 		Scanner in = new Scanner(System.in);
-		System.out.println("Enter your name.");
+		System.out.println("Enter your name:");
 		String name = in.nextLine();
 		CountryGame game = new CountryGame(name);
 		game.startGame();
@@ -45,6 +45,7 @@ class CountryGame{
 		while(true){
 			System.out.println(username + " enter a country name");
 			country = in.nextLine();
+			country = country.toLowerCase();
 
 			if(selectedCountries.contains(country)){
 				System.out.println(username + " that country was already selected");
@@ -61,8 +62,11 @@ class CountryGame{
 
 			capital = countryCapital(country);
 			area = countryArea(country);
+			population = countryPopulation(country);
 			
-			System.out.println(capital+" "+ area +" " + " Population ");
+			System.out.println("Capital: "+capital);
+			System.out.println("Population: ~ "+population+ " million" );
+			System.out.println("Area: ~ "+area+"x10000 km2");
 		}
 		System.out.println("Thanks for playing");
 		in.close();
@@ -73,6 +77,9 @@ class CountryGame{
 	 *  Checks if the submitted String is a country 
 	 *  by comparing the string to a web page that contains a list of countries.
 	 *  If it finds the string then the country exist.
+	 *  
+	 *  <i>Another way to implement this method is to add a list of countries to
+	 *  an array and check if the selected country is in the array.</i>
 	 * 
 	 * @param country - The name of the country submitted by user
 	 * @return If the country entered exist or not.
@@ -85,7 +92,7 @@ class CountryGame{
 
 			String temp="";
 			while(null != (temp = in.readLine())){
-				if(temp.contains(country)){
+				if(temp.toLowerCase().contains(country)){
 					return true;
 				}
 			}
@@ -104,14 +111,16 @@ class CountryGame{
 		boolean control = false;
 		country = country.replace(' ','_');
 		String capital="";
-		
 		try { 
 			URL countryURL = new URL("http://en.wikipedia.org/wiki/"+country);
-			BufferedReader br = new BufferedReader(new InputStreamReader(countryURL.openStream()));
+			BufferedReader br = new BufferedReader(new InputStreamReader(countryURL.openStream(),"UTF-8"));
 			String strTemp = "";
 			while(null != (strTemp = br.readLine())){
 				if(control && strTemp.contains("title=")){
+					
 					capital = strTemp.replaceAll("\\<[^>]*>","");
+					capital = capital.replaceAll("\\(.*?\\)","");
+					capital = capital.replaceAll("\\[.*?\\]","");
 					capital = capital.trim();
 					break;
 				}else if(strTemp.contains("<b>Capital</b>")){
@@ -133,9 +142,34 @@ class CountryGame{
 	 */
 	private String countryPopulation(String country){
 		String population="";
+		country = country.replace(' ','_');
+		boolean control = false;
 		
+		try { 
+			URL countryURL = new URL("http://en.wikipedia.org/wiki/"+country);
+			BufferedReader br = new BufferedReader(new InputStreamReader(countryURL.openStream()));
+			String strTemp = "";
+			while(null != (strTemp = br.readLine())){
+				if(strTemp.contains("List of countries by population")){
+					population = strTemp.replaceAll("\\<[^>]*>","");
+					population = population.replaceAll("\\[.*?\\]","");
+					population = population.replaceAll("\\(.*?\\)","");
+					population = population.replaceAll(",","");
+					population = population.replaceAll("\\.","");
+					population = population.trim();
+					break;
+				}
+//				else if(strTemp.contains("estimate")){
+//					control = true;
+//				}
+			}
+		} catch (IOException e) {
+			System.out.println("Could not find country wiki page 1");
+		}
 		
-		
+		int populationInt = Integer.parseInt(population);
+		populationInt = populationInt/1000000;
+		population = String.valueOf(populationInt);
 		return population;
 
 	}
@@ -158,7 +192,11 @@ class CountryGame{
 			while(null != (strTemp = br.readLine())){
 				if(areaControl && totalControl && strTemp.contains("km")){
 					area = strTemp.replaceAll("\\<[^>]*>","");
-					area = area.replace("&#160;km2", " km^2");
+					area = area.replaceAll("\\[.*?\\]","");
+					area = area.replaceAll("\\(.*?\\)","");
+					area = area.replace("&#160;km2", "");
+					area = area.replace(",", "");
+					area = area.replaceAll("\\.","");
 					area = area.trim();
 					break;
 				}else if(strTemp.contains("Total")){
@@ -168,8 +206,12 @@ class CountryGame{
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("Could not find country wiki page");
+			System.out.println("Could not find country wiki page 2");
 		}
+		
+		int areaInt = Integer.parseInt(area);
+		areaInt = areaInt/10000;
+		area = String.valueOf(areaInt);
 		return area;
 
 	}
