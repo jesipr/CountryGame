@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
-import javax.xml.ws.Response;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -81,24 +79,24 @@ class CountryGame{
 			System.out.println("Capital: "+capital);
 			System.out.println("Population: ~ "+population+ " million" );
 			System.out.println("Area: ~ "+area+"x10000 km2");
-			
-			
+
+
 			country = computerAnswer();
 			selectedCountries.add(country);
 			System.out.println("Enter info for " + country);
 			userAnswer = in.nextLine(); //Suppose to be in less than 15 seconds,
 			if(!correctInfo(country,userAnswer)){
 				System.out.println("Wrong input! You lost. Game over. By the way, the right answer is");
-				
+
 				capital = countryCapital(country);
 				area = countryArea(country);
 				population = countryPopulation(country);
-				
+
 				System.out.println("Capital: "+capital);
 				System.out.println("Population: ~ "+population+ " million" );
 				System.out.println("Area: ~ "+area+"x10000 km2");
 				break;
-				
+
 			}else{
 				System.out.println("Very good!");
 			}
@@ -106,7 +104,7 @@ class CountryGame{
 			if(correctAnswer==10){
 				System.out.println("You have won!");
 			}
-			
+
 
 
 		}
@@ -246,19 +244,19 @@ class CountryGame{
 	}
 
 	/**
-	 * Initiate a contry ArrayList
+	 * Initiate a country ArrayList
 	 * @throws IOException 
 	 */
 	private void initCountryList(){
 		try{
-		HttpResponse<JsonNode> response = Unirest.get("https://restcountries-v1.p.mashape.com/all").header("X-Mashape-Key", "xJrFtTxyDPmsh54w4upwKJMv4Fxzp1MJunXjsnFO2BzUfq2GJK").asJson();
-		JsonNode n = response.getBody();
-		JSONArray a = n.getArray();
-		for(int i = 0; i<a.length();i++){
-			JSONObject rec = a.getJSONObject(i);
-			countryList.add(rec.getString("name"));
-		}
-		Unirest.shutdown();
+			System.out.println("Looking for countries...");
+			HttpResponse<JsonNode> response = Unirest.get("https://restcountries-v1.p.mashape.com/all").header("X-Mashape-Key", "xJrFtTxyDPmsh54w4upwKJMv4Fxzp1MJunXjsnFO2BzUfq2GJK").asJson();
+			JSONArray a = response.getBody().getArray();
+			for(int i = 0; i<a.length();i++){
+				JSONObject rec = a.getJSONObject(i);
+				countryList.add(rec.getString("name").toLowerCase());
+			}
+			Unirest.shutdown();
 		} catch (UnirestException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -266,8 +264,8 @@ class CountryGame{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
+
 	}
 
 	/**
@@ -284,7 +282,7 @@ class CountryGame{
 		}while(selectedCountries.contains(computerSelect));
 		return computerSelect;
 	}
-	
+
 	/**
 	 * Verifies if the entered info is the correct info of the country.
 	 * @param country - County selected by the computer
@@ -296,7 +294,7 @@ class CountryGame{
 		String population;
 		String area;
 		String comparisonString;
-		
+
 		capital = countryCapital(country);
 		population = countryPopulation(country);
 		area = countryArea(country);
@@ -305,7 +303,7 @@ class CountryGame{
 			return true;
 		}
 		return false;
-		
+
 	}
 
 }
