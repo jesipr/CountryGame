@@ -1,7 +1,5 @@
-import java.io.BufferedReader;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -136,7 +134,7 @@ class CountryGame{
 	 * @return The capital of the entered country
 	 */
 	private String countryCapital(String country){
-		
+
 		for(int i = 0; i<countriesInfoArray.length();i++){
 			JSONObject rec = countriesInfoArray.getJSONObject(i);
 			if(rec.getString("name").equalsIgnoreCase(country)){
@@ -154,31 +152,19 @@ class CountryGame{
 	 * @return The population of the entered country
 	 */
 	private String countryPopulation(String country){
-		String population="";
-		country = country.replace(' ','_');
+		String population = "";
+		int populationInt = 0;
 
-		try { 
-			URL countryURL = new URL("http://en.wikipedia.org/wiki/"+country);
-			BufferedReader br = new BufferedReader(new InputStreamReader(countryURL.openStream()));
-			String strTemp = "";
-			while(null != (strTemp = br.readLine())){
-				if(strTemp.contains("List of countries by population")){
-					population = strTemp.replaceAll("\\<[^>]*>","");
-					population = population.replaceAll("\\[.*?\\]","");
-					population = population.replaceAll("\\(.*?\\)","");
-					population = population.replaceAll(",","");
-					population = population.replaceAll("\\.","");
-					population = population.trim();
-					break;
-				}
+		for(int i = 0; i<countriesInfoArray.length();i++){
+			JSONObject rec = countriesInfoArray.getJSONObject(i);
+			if(rec.getString("name").equalsIgnoreCase(country)){
+				populationInt = rec.getInt("population");
 			}
-		} catch (IOException e) {
-			System.out.println("Could not find country wiki page 1");
 		}
-
-		int populationInt = Integer.parseInt(population);
 		populationInt = populationInt/1000000;
+		
 		population = String.valueOf(populationInt);
+
 		return population;
 
 	}
@@ -193,37 +179,20 @@ class CountryGame{
 	 * (precondition: Wikipedia must redirect contry names with lowercases to the correct wikipage) 
 	 */
 	private String countryArea(String country){
-		boolean areaControl = false;
-		boolean totalControl = false;
-		country = country.replace(' ','_');
-		String area="";
+		String area = "";
+		int areaInt = 0;
 
-		try { 
-			URL countryURL = new URL("http://en.wikipedia.org/wiki/"+country);
-			BufferedReader br = new BufferedReader(new InputStreamReader(countryURL.openStream()));
-			String strTemp = "";
-			while(null != (strTemp = br.readLine())){
-				if(areaControl && totalControl && strTemp.contains("km")){
-					area = strTemp.replaceAll("\\<[^>]*>","");
-					area = area.replaceAll("\\[.*?\\]","");
-					area = area.replaceAll("\\(.*?\\)","");
-					area = area.replace("&#160;km2", "");
-					area = area.replace(",", "");
-					area = area.trim();
-					break;
-				}else if(strTemp.contains("Total")){
-					totalControl = true;
-				}else if(strTemp.contains("Area")){
-					areaControl = true;
-				}
+		for(int i = 0; i<countriesInfoArray.length();i++){
+			JSONObject rec = countriesInfoArray.getJSONObject(i);
+			if(rec.getString("name").equalsIgnoreCase(country)){
+				areaInt = rec.getInt("area");
 			}
-		} catch (IOException e) {
-			System.out.println("Could not find country wiki page 2");
 		}
-		double areaReal = Double.parseDouble(area);
-		int areaInt = (int) areaReal;
 		areaInt = areaInt/10000;
+		
 		area = String.valueOf(areaInt);
+		
+
 		return area;
 
 	}
