@@ -39,6 +39,7 @@ class CountryGame{
 	private String area;
 	private int correctAnswer = 0;
 	private String userAnswer;
+	private JSONArray countriesInfoArray;
 
 
 
@@ -130,33 +131,17 @@ class CountryGame{
 
 	/**
 	 * Looks for the capital of the entered country
-	 * <b>(precondition: Wikipedia must redirect contry names with lowercases to the correct wikipage) </b>
+	 * 
 	 * @param country - The name of the country
 	 * @return The capital of the entered country
 	 */
 	private String countryCapital(String country){
-		boolean control = false;
-		country = country.replaceAll(" ", "_");
-		String capital="";
-		try { 
-			URL countryURL = new URL("http://en.wikipedia.org/wiki/"+country);
-			BufferedReader br = new BufferedReader(new InputStreamReader(countryURL.openStream(),"UTF-8"));
-			String strTemp = "";
-			while(null != (strTemp = br.readLine())){
-				if(control && strTemp.contains("title=")){
-					capital = strTemp.replaceAll("\\<[^>]*>","");
-					capital = capital.replaceAll("\\(.*?\\)","");
-					capital = capital.replaceAll("\\[.*?\\]","");
-					capital = capital.replaceAll("\\&.*?\\;","");
-					capital = capital.trim();
-					break;
-				}else if(strTemp.contains("<b>Capital</b>")){
-					control = true;
-				}
+		
+		for(int i = 0; i<countriesInfoArray.length();i++){
+			JSONObject rec = countriesInfoArray.getJSONObject(i);
+			if(rec.getString("name").equalsIgnoreCase(country)){
+				capital = rec.getString("capital");
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("Could not find country wiki page");
 		}
 		return capital;
 	}
@@ -251,9 +236,9 @@ class CountryGame{
 		try{
 			System.out.println("Looking for countries...");
 			HttpResponse<JsonNode> response = Unirest.get("https://restcountries-v1.p.mashape.com/all").header("X-Mashape-Key", "xJrFtTxyDPmsh54w4upwKJMv4Fxzp1MJunXjsnFO2BzUfq2GJK").asJson();
-			JSONArray a = response.getBody().getArray();
-			for(int i = 0; i<a.length();i++){
-				JSONObject rec = a.getJSONObject(i);
+			countriesInfoArray = response.getBody().getArray();
+			for(int i = 0; i<countriesInfoArray.length();i++){
+				JSONObject rec = countriesInfoArray.getJSONObject(i);
 				countryList.add(rec.getString("name").toLowerCase());
 			}
 			Unirest.shutdown();
