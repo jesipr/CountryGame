@@ -6,6 +6,16 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+import javax.xml.ws.Response;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+
 
 public class RunGame {
 
@@ -237,18 +247,27 @@ class CountryGame{
 
 	/**
 	 * Initiate a contry ArrayList
+	 * @throws IOException 
 	 */
 	private void initCountryList(){
-		try { 
-			URL countryURL = new URL("http://vbcity.com/cfs-filesystemfile.ashx/__key/CommunityServer.Components.PostAttachments/00.00.61.18.99/Country-List.txt");
-			BufferedReader br = new BufferedReader(new InputStreamReader(countryURL.openStream()));
-			String strTemp = "";
-			while(null != (strTemp = br.readLine())){
-				countryList.add(strTemp.toLowerCase());
-			}
-		} catch (IOException e) {
-			System.out.println("Could not find country wiki page");
+		try{
+		HttpResponse<JsonNode> response = Unirest.get("https://restcountries-v1.p.mashape.com/all").header("X-Mashape-Key", "xJrFtTxyDPmsh54w4upwKJMv4Fxzp1MJunXjsnFO2BzUfq2GJK").asJson();
+		JsonNode n = response.getBody();
+		JSONArray a = n.getArray();
+		for(int i = 0; i<a.length();i++){
+			JSONObject rec = a.getJSONObject(i);
+			countryList.add(rec.getString("name"));
 		}
+		Unirest.shutdown();
+		} catch (UnirestException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	/**
