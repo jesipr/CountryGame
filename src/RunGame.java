@@ -82,7 +82,7 @@ class CountryGame{
 
 			country = computerAnswer();
 			selectedCountries.add(country);
-			System.out.println("Enter info for " + country);
+			System.out.println("Enter info for " + country + " [Capital Population Area]");
 			userAnswer = in.nextLine(); //Suppose to be in less than 15 seconds,
 			if(!correctInfo(country,userAnswer)){
 				System.out.println("Wrong input! You lost. Game over. By the way, the right answer is");
