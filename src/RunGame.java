@@ -2,13 +2,13 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
+import java.util.Scanner; 
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.JsonNode; 
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -198,7 +198,7 @@ class CountryGame{
 	}
 
 	/**
-	 * Initiate a country ArrayList
+	 * Initiate a country ArrayList using an API from Mashape
 	 * @throws IOException 
 	 */
 	private void initCountryList(){
